@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Вход в систему</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card" aria-labelledby="page-title">
+        <div class="brand-mark" aria-hidden="true">N</div>
+        <p class="eyebrow">NANO SIEM</p>
+        <h1 id="page-title">Добро пожаловать</h1>
+        <p class="subtitle">Войдите, чтобы продолжить работу</p>
+
+        <form id="login-form">
+          <label for="login">Логин</label>
+          <input id="login" name="login" type="text" autocomplete="username" required />
+
+          <label for="password">Пароль</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+
+          <button type="submit">Войти</button>
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <script>
+      const form = document.querySelector("#login-form");
+      const status = document.querySelector("#status");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.textContent = "Проверяем данные…";
+        status.className = "status";
+
+        const values = new FormData(form);
+        const params = new URLSearchParams({
+          login: values.get("login"),
+          password: values.get("password"),
+        });
+
+        try {
+          const response = await fetch(`/api/login?${params}`);
+          const data = await response.json();
+          status.textContent = data.message || data.detail;
+          status.className = `status ${response.ok ? "success" : "error"}`;
+        } catch {
+          status.textContent = "Не удалось связаться с сервером";
+          status.className = "status error";
+        }
+      });
+    </script>
+  </body>
+</html>

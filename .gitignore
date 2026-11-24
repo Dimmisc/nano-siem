@@ -174,3 +174,5 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+target/nginx/default.conf
+target/ssh/sshd_config
