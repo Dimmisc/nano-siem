@@ -1,6 +1,7 @@
 from pathlib import Path
+from typing_extensions import Annotated
 
-from fastapi import FastAPI, Form, HTTPException, Query
+from fastapi import Body, FastAPI, Form, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
 
 from settings import settings
@@ -23,6 +24,22 @@ def login(
             status_code=401, detail="Неверный логин или пароль")
 
     return {"message": "Вход выполнен успешно"}
+
+
+app2 = FastAPI(title="Logs target")
+
+
+@app2.post("/api2/logs")
+def log_parser(hostname: Annotated[str, Body()], source: Annotated[str, Body()], logs: list[str]):
+    if source == "nginx":
+        with open(BASE_DIR / "static" / "nginx_logs.txt", "a") as f:
+            for log in logs:
+                f.write(f"{hostname} {log}\n")
+    else:
+        with open(BASE_DIR / "static" / "ssh_logs.txt", "a") as f:
+            for log in logs:
+                f.write(f"{hostname} {log}\n")
+    return {"message": "Логи успешно записаны"}
 
 
 # скоро будем использовать для сканирования уязвимостей

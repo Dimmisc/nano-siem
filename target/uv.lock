@@ -1180,10 +1180,14 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
+    { name = "requests" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "fastapi", extras = ["standard"], specifier = ">=0.162.5" }]
+requires-dist = [
+    { name = "fastapi", extras = ["standard"], specifier = ">=0.162.5" },
+    { name = "requests", specifier = ">=2.34.2" },
+]
 
 [[package]]
 name = "truststore"

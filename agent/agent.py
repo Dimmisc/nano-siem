@@ -6,7 +6,7 @@ import json
 import requests
 # здесь мы инициализируем токен агента (его в идеале стоит проверять на эндпоинтах SOC) и url SOC
 AGENT_TOKEN = os.environ.get("AGENT_TOKEN", "web_agent1")
-SOC_URL = os.environ.get("SOC_URL", "http://localhost:5000/ingest")
+SOC_URL = os.environ.get("SOC_URL", "http://localhost:8081/api2/logs")
 
 HOSTNAME = socket.gethostname()
 
@@ -16,7 +16,7 @@ files = [
     {"path": "/var/log/target_ssh/auth.log", "source": "ssh"}
 ]
 
-FILES = json.loads(os.environ.get("FILES", json.dump(files)))
+FILES = json.loads(os.environ.get("FILES", json.dumps(files)))
 
 BATCH_SIZE = 50
 
@@ -55,7 +55,7 @@ def tail_file(file_path: str, source: str):
         print(
             f"File {file_path} does not exist. Waiting for it to be created...")
         time.sleep(5)
-    cur_pos = os.path.get_size(file_path)
+    cur_pos = 0
     with open(file_path, "r") as f:
         f.seek(cur_pos)
         # цикл читает построчно файл логов, если есть лог, то добавляем в список, если нет, то проверяем, не был лли перезаписан файл (например, при ротации логов)
@@ -85,7 +85,7 @@ def tail_file(file_path: str, source: str):
 
 
 def main():
-    threads = [threading.Thread(target=tail_file(
+    threads = [threading.Thread(target=tail_file, args=(
         file["path"], file["source"])) for file in FILES]
     for thread in threads:
         thread.start()
@@ -95,3 +95,7 @@ def main():
             time.sleep(1)
     except KeyboardInterrupt:
         print("Agent stopped by user.")
+
+
+if __name__ == "__main__":
+    main()
