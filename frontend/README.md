@@ -1,4 +1,4 @@
-# Nano-SIEM — SOC Monitoring
+# Nano-SIEM
 
 React + TypeScript + Vite. Отдельная панель SOC, не сайт-мишень.
 
